@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Add House | HouseRent</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="auth-body">
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="logo">
+        <h2>🏠 HouseRent</h2>
+      </div>
+      <div class="nav-links">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="#" onclick="Auth.logout()" class="btn btn-secondary">Logout</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="auth-container">
+    <div class="auth-card glass" style="max-width:900px;">
+      <h2>Add New House</h2>
+      <p class="auth-subtitle">Enter details to list your property for rent.</p>
+
+      <form id="houseForm">
+        <div class="form-group">
+          <label>Title</label>
+          <input type="text" id="title" required placeholder="e.g., 2BHK Near City Center">
+        </div>
+
+        <div class="form-group">
+          <label>Location</label>
+          <input type="text" id="location" required placeholder="City / Area">
+        </div>
+
+        <div class="form-group">
+          <label>Rent (₹ per month)</label>
+          <input type="number" id="rent" required min="0">
+        </div>
+
+        <div class="form-group">
+          <label>House Type</label>
+          <select id="type">
+            <option value="1BHK">1 BHK</option>
+            <option value="2BHK">2 BHK</option>
+            <option value="3BHK">3 BHK</option>
+            <option value="independent">Independent House</option>
+            <option value="villa">Villa</option>
+          </select>
+        </div>
+<div class="form-group">
+  <label>House Image</label>
+  <input type="file" id="image" accept="image/*">
+</div>
+
+        <div class="form-group">
+          <label>Amenities</label>
+          <input type="text" id="amenities"
+                 placeholder="e.g., WiFi, Parking, Lift, Security">
+        </div>
+
+        <div class="form-group">
+          <label>Short Description</label>
+          <textarea id="description" rows="3"
+                    placeholder="Highlight key features"></textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Restrictions</label>
+          <div class="radio-group" style="flex-wrap:wrap;">
+            <label><input type="checkbox" value="no_pets"> No Pets</label>
+            <label><input type="checkbox" value="no_bachelors"> No Bachelors</label>
+            <label><input type="checkbox" value="family_only"> Family Only</label>
+            <label><input type="checkbox" value="no_smoking"> No Smoking</label>
+            <label><input type="checkbox" value="no_alcohol"> No Alcohol</label>
+            <label><input type="checkbox" value="vegetarian_only"> Vegetarian Only</label>
+            <label><input type="checkbox" value="no_late_night_entry"> No Late Night Entry</label>
+            <label><input type="checkbox" value="time_restriction"> Time Restriction</label>
+          </div>
+          <input type="text" id="timeWindow"
+                 placeholder="Allowed time window, e.g., 7AM–9PM">
+        </div>
+         <button type="submit" id="houseSubmitBtn" class="btn btn-primary btn-full">
+  Save House
+</button>
+
+        <p id="houseMsg" class="auth-footer-text"></p>
+      </form>
+    </div>
+  </section>
+
+  <script src="auth.js"></script>
+  <script src="houses.js"></script>
+  <script>
+document.addEventListener('DOMContentLoaded', () => {
+  const editingId = localStorage.getItem('editingHouseId');
+  if (editingId) {
+    const house = HousesStore.getAll().find(h => h.id == editingId);
+    if (house) {
+      document.getElementById('title').value = house.title;
+      document.getElementById('location').value = house.location;
+      document.getElementById('rent').value = house.rent;
+      document.getElementById('type').value = house.type;
+      document.getElementById('amenities').value = house.amenities || '';
+      document.getElementById('description').value = house.description || '';
+      document.getElementById('timeWindow').value = house.timeWindow || '';
+      
+      document.querySelectorAll('.radio-group input[type="checkbox"]').forEach(cb => {
+        cb.checked = house.restrictions?.includes(cb.value) || false;
+      });
+      
+      const form = document.getElementById('houseForm');
+      const submitBtn = form.querySelector('button[type="submit"]');
+      submitBtn.textContent = 'Update House';
+      form.dataset.editingId = editingId;
+      form.scrollIntoView({ behavior: 'smooth' });
+      
+      localStorage.removeItem('editingHouseId');
+    }
+  }
+});
+// Inquiries System
+class InquiriesStore {
+  static getAll() {
+    return JSON.parse(localStorage.getItem('house_inquiries') || '[]');
+  }
+  
+  static saveAll(inquiries) {
+    localStorage.setItem('house_inquiries', JSON.stringify(inquiries));
+  }
+  
+  static addInquiry(data) {
+    const inquiries = this.getAll();
+    const newInquiry = {
+      id: Date.now(),
+      houseId: data.houseId,
+      tenantEmail: data.tenantEmail,
+      message: data.message,
+      status: 'new', // new, read, responded
+      createdAt: new Date().toISOString()
+    };
+    inquiries.push(newInquiry);
+    this.saveAll(inquiries);
+    return newInquiry;
+  }
+}
+
+// Tenant sends inquiry
+function sendInquiry(houseId) {
+  const user = Auth.getCurrentUser();
+  if (!user || user.role !== 'tenant') {
+    alert('Login as tenant');
+    return;
+  }
+  
+  const message = prompt('Your message to owner:');
+  if (!message || message.trim().length < 5) {
+    alert('Message too short');
+    return;
+  }
+  
+  InquiriesStore.addInquiry({
+    houseId,
+    tenantEmail: user.email,
+    message: message.trim()
+  });
+  
+  alert('📩 Inquiry sent! Owner notified.');
+}
+
+// Owner dashboard - show inquiries
+function renderOwnerInquiries() {
+  const inquiriesEl = document.getElementById('ownerInquiries');
+  if (!inquiriesEl) return;
+  
+  const currentUser = Auth.getCurrentUser();
+  if (!currentUser || currentUser.role !== 'owner') return;
+  
+  const allInquiries = InquiriesStore.getAll();
+  const myInquiries = allInquiries.filter(i => 
+    HousesStore.getAll().some(h => h.id == i.houseId && h.ownerEmail === currentUser.email)
+  );
+  
+  inquiriesEl.innerHTML = '';
+  
+  if (!myInquiries.length) {
+    inquiriesEl.innerHTML = '<p>No new inquiries</p>';
+    return;
+  }
+  
+  myInquiries.forEach(inquiry => {
+    const house = HousesStore.getAll().find(h => h.id == inquiry.houseId);
+    const div = document.createElement('div');
+    div.className = `inquiry-card ${inquiry.status}`;
+    div.innerHTML = `
+      <div class="inquiry-header">
+        <strong>${house ? house.title : 'House'}</strong> 
+        <span class="status ${inquiry.status}">${inquiry.status.toUpperCase()}</span>
+      </div>
+      <p>${inquiry.message}</p>
+      <small>From: ${inquiry.tenantEmail}</small>
+      <div class="inquiry-actions">
+        ${inquiry.status === 'new' ? 
+          `<button onclick="markRead(${inquiry.id})">Mark Read</button>` : 
+          `<button onclick="markResponded(${inquiry.id})">Mark Responded</button>`
+        }
+      </div>
+    `;
+    inquiriesEl.appendChild(div);
+  });
+}
+
+function markRead(inquiryId) {
+  let inquiries = InquiriesStore.getAll();
+  const inquiry = inquiries.find(i => i.id == inquiryId);
+  if (inquiry) {
+    inquiry.status = 'read';
+    InquiriesStore.saveAll(inquiries);
+    renderOwnerInquiries();
+  }
+}
+
+function markResponded(inquiryId) {
+  let inquiries = InquiriesStore.getAll();
+  const inquiry = inquiries.find(i => i.id == inquiryId);
+  if (inquiry) {
+    inquiry.status = 'responded';
+    InquiriesStore.saveAll(inquiries);
+    renderOwnerInquiries();
+  }
+}
+</script>
+</body>
+</html>

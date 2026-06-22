@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tenant Dashboard | HouseRent</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="auth-body">
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="logo">
+        <h2>🏠 HouseRent</h2>
+      </div>
+      <div class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="#" onclick="Auth.logout()" class="btn btn-secondary">Logout</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="auth-container">
+  <div class="auth-card glass" style="max-width:1100px;">
+    <h2>Available Houses</h2>
+    <p class="auth-subtitle">Search and filter houses that match your needs.</p>
+    <div class="favorites-section">
+  <h3 id="favoritesTitle">💾 My Favorites (<span id="favoritesCount">0</span>)</h3>
+  <div id="favoritesList" class="properties-grid">
+    <!-- saved houses show here -->
+  </div>
+</div>
+    <div class="search-filters">
+  <input
+    type="text"
+    id="searchText"
+    placeholder="Search by location or title"
+    class="search-input"
+  >
+
+  <select id="filterType" class="search-select">
+    <option value="">All Types</option>
+    <option value="1BHK">1 BHK</option>
+    <option value="2BHK">2 BHK</option>
+    <option value="3BHK">3 BHK</option>
+    <option value="independent">Independent House</option>
+    <option value="villa">Villa</option>
+  </select>
+
+  <input
+    type="number"
+    id="minRent"
+    placeholder="Min rent"
+    class="search-input small"
+    min="0"
+  >
+  <input
+    type="number"
+    id="maxRent"
+    placeholder="Max rent"
+    class="search-input small"
+    min="0"
+  >
+</div>
+
+<div id="housesList" class="properties-grid">
+  <!-- cards stay here -->
+</div>
+  </div>
+</section>
+<script src="houses.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    renderTenantHouses();
+    renderFavorites();  // ← ADD THIS LINE
+
+    const searchText = document.getElementById('searchText');
+    const filterType = document.getElementById('filterType');
+    const minRent = document.getElementById('minRent');
+    const maxRent = document.getElementById('maxRent');
+
+    [searchText, filterType, minRent, maxRent].forEach(el => {
+      if (!el) return;
+      el.addEventListener('input', () => {
+        renderTenantHouses();
+        renderFavorites();  // ← ADD THIS TOO
+      });
+      el.addEventListener('change', () => {
+        renderTenantHouses();
+        renderFavorites();  // ← ADD THIS TOO
+      });
+    });
+  });
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    renderTenantHouses();
+    renderFavorites();  // ← ADD THIS LINE
+
+    const searchText = document.getElementById('searchText');
+    const filterType = document.getElementById('filterType');
+    const minRent = document.getElementById('minRent');
+    const maxRent = document.getElementById('maxRent');
+
+    [searchText, filterType, minRent, maxRent].forEach(el => {
+      if (!el) return;
+      el.addEventListener('input', () => {
+        renderTenantHouses();
+        renderFavorites();  // ← ADD THIS TOO
+      });
+      el.addEventListener('change', () => {
+        renderTenantHouses();
+        renderFavorites();  // ← ADD THIS TOO
+      });
+    });
+  });
+</script>
+
+
+  <script src="auth.js"></script>
+</body>
+</html>

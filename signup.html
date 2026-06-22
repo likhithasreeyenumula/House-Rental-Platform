@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up | HouseRent</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="auth-body">
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <h2>🏠 HouseRent</h2>
+            </div>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="login.html" class="btn btn-secondary">Login</a>
+            </div>
+        </div>
+    </nav>
+
+    <section class="auth-container" id="owner">
+        <div class="auth-card glass">
+            <h2>Create account</h2>
+            <p class="auth-subtitle">Choose your role and enter details</p>
+
+            <form id="signupForm">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="signupName" required placeholder="Your name">
+                </div>
+
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="signupEmail" required placeholder="you@example.com">
+                </div>
+
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="signupPassword" required minlength="6" placeholder="Min 6 characters">
+                </div>
+
+                <div class="form-group">
+                    <label>Role</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="role" value="tenant" checked> Tenant</label>
+                        <label><input type="radio" name="role" value="owner"> Owner</label>
+                    </div>
+                </div>
+
+                <div class="form-group" id="familyTypeGroup">
+                    <label>Household Type (for Tenants)</label>
+                    <select id="familyType">
+                        <option value="single_working">Single Working Professional</option>
+                        <option value="student_group">Students / Roommates</option>
+                        <option value="nuclear_family">Nuclear Family (2–4 members)</option>
+                        <option value="joint_family">Joint / Large Family (5+ members)</option>
+                    </select>
+                </div>
+                
+
+                <button type="submit" class="btn btn-primary btn-full">Create account</button>
+
+                <p class="auth-footer-text">
+                    Already have an account?
+                    <a href="login.html">Login</a>
+                </p>
+
+                <p id="signupError" class="error-text"></p>
+            </form>
+        </div>
+    </section>
+
+    <script src="auth.js"></script>
+    <script>
+        const signupForm = document.getElementById('signupForm');
+        const signupError = document.getElementById('signupError');
+        const roleRadios = document.getElementsByName('role');
+        const familyTypeGroup = document.getElementById('familyTypeGroup');
+
+        roleRadios.forEach(r => {
+            r.addEventListener('change', () => {
+                if (r.value === 'tenant' && r.checked) {
+                    familyTypeGroup.style.display = 'block';
+                }
+                if (r.value === 'owner' && r.checked) {
+                    familyTypeGroup.style.display = 'none';
+                }
+            });
+        });
+
+        signupForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('signupName').value.trim();
+            const email = document.getElementById('signupEmail').value.trim();
+            const password = document.getElementById('signupPassword').value.trim();
+            const role = [...roleRadios].find(r => r.checked).value;
+            const familyTypeSelect = document.getElementById('familyType');
+            const familyType = role === 'tenant' ? familyTypeSelect.value : null;
+
+            const result = Auth.signup(name, email, password, role, familyType);
+            if (!result.success) {
+                signupError.textContent = result.error;
+            }
+        });
+    </script>
+</body>
+</html>

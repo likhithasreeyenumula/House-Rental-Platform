@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HouseRent - Find Your Perfect Home</title>
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="auth-body">
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="nav-container">
+        <div class="logo">
+            <h2>🏠 HouseRent</h2>
+        </div>
+        <div class="nav-links">
+            <a href="login.html" class="btn btn-primary">Login</a>
+            <a href="signup.html" class="btn btn-secondary">Sign Up</a>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero-main">
+
+        <div class="hero-content">
+            <h1>Find Your Dream Rental Home</h1>
+            <p>Verified houses from trusted owners near your college or office.</p>
+
+            <!-- Search -->
+            <div class="search-hero-group">
+                <input type="text" id="searchText" placeholder="Enter location" class="search-hero">
+                
+                <select id="filterType" class="search-hero">
+                    <option value="">All Types</option>
+                    <option value="1BHK">1BHK</option>
+                    <option value="2BHK">2BHK</option>
+                </select>
+
+                <button class="search-hero-btn" onclick="goToSearch()">🔍 Search</button>
+            </div>
+
+            <div class="hero-buttons">
+                <a href="signup.html" class="btn btn-large btn-primary">Start as Tenant</a>
+                <a href="signup.html#owner" class="btn btn-large btn-outline">List Property</a>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="hero-stats-main">
+            <div class="hero-stat-main">
+                <div class="stat-number-main">150+</div>
+                <div class="stat-label-main">Active Listings</div>
+            </div>
+            <div class="hero-stat-main">
+                <div class="stat-number-main">12</div>
+                <div class="stat-label-main">Cities</div>
+            </div>
+            <div class="hero-stat-main">
+                <div class="stat-number-main">4.9★</div>
+                <div class="stat-label-main">Rating</div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<!-- Features -->
+<section class="features-home">
+    <div class="container">
+        <h2 class="section-title">Why Choose HouseRent?</h2>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🔍</div>
+                <h3>Smart Search</h3>
+                <p>Filter by location, budget and BHK type</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">❤️</div>
+                <h3>Save Favorites</h3>
+                <p>Bookmark houses for easy comparison</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">📱</div>
+                <h3>Direct Contact</h3>
+                <p>Chat with verified owners instantly</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">✅</div>
+                <h3>Safe Rentals</h3>
+                <p>Verified owners and secure platform</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="site-footer">
+    <div class="footer-inner">
+        <a href="#">About</a>
+        <a href="#">Contact</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms</a>
+    </div>
+</footer>
+
+<!-- JS -->
+<script src="auth.js"></script>
+<script>
+function goToSearch() {
+    const search = document.getElementById('searchText').value;
+    const type = document.getElementById('filterType').value;
+
+    localStorage.setItem('search_location', search);
+    localStorage.setItem('search_type', type);
+
+    window.location.href = 'tenant/dashboard.html';
+}
+</script>
+
+</body>
+</html>
